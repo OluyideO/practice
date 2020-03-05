@@ -1,0 +1,122 @@
+Fn::Sub: |
+  {
+    "widgets": [
+    {
+      "type": "metric",
+      "x": 12,
+      "y": 3,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+        [ "AWS/ApiGateway", "4XXError", "ApiName", "${self:provider.stage}-${self:service}", { "stat": "Sum", "period": 60, "label": "4XX Errors" } ],
+        [ ".", "5XXError", ".", ".", { "stat": "Sum", "label": "5XX Errors", "period": 60, "color": "#d62728" } ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "eu-central-1",
+        "title": "${self:service}-${self:provider.stage} :: Error counts",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 0,
+      "width": 18,
+      "height": 3,
+      "properties": {
+        "metrics": [
+        [ "AWS/ApiGateway", "Count", "ApiName", "${self:provider.stage}-${self:service}", { "stat": "Sum", "label": "Call Count", "period": 2592000 } ],
+        [ ".", "4XXError", ".", ".", { "stat": "Sum", "label": "4XX Errors", "period": 2592000 } ],
+        [ ".", "5XXError", ".", ".", { "stat": "Sum", "label": "5XX Errors", "period": 2592000 } ],
+        [ "AWS/Lambda", "Duration", "FunctionName", "${AppLambdaFunction}", { "yAxis": "left", "label": "Lambda Duration (max)", "stat": "Maximum", "period": 2592000 } ]
+        ],
+        "view": "singleValue",
+        "region": "eu-central-1",
+        "stacked": false,
+        "setPeriodToTimeRange": true,
+        "period": 300,
+        "title": "${self:service}-${self:provider.stage} :: Health Summary"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 9,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+        [ "AWS/Lambda", "Duration", "FunctionName", "${AppLambdaFunction}", { "stat": "Maximum", "period": 60 } ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "eu-central-1",
+        "period": 300,
+        "yAxis": {
+          "left": {
+            "min": 100
+          }
+        },
+        "title": "${self:service}-${self:provider.stage} :: Lambda duration (max)"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 3,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+        [ "AWS/ApiGateway", "Count", "ApiName", "${self:provider.stage}-${self:service}", { "stat": "Sum", "period": 60 } ],
+        [ ".", "Latency", ".", ".", { "period": 60, "stat": "Sum", "yAxis": "right" } ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "eu-central-1",
+        "title": "${self:service}-${self:provider.stage} :: Invocations & Latency",
+        "period": 300
+      }
+    },
+    {
+      "type": "log",
+      "x": 0,
+      "y": 21,
+      "width": 24,
+      "height": 6,
+      "properties": {
+        "query": "SOURCE '/aws/lambda/${AppLambdaFunction}' | fields @message as Message\n| sort @timestamp desc\n| filter @message like /(?i)(\"errorMessage\"|\"statusCode\":.?4\\d\\d|\"statusCode\":.?5\\d\\d)/\n| limit 10",
+        "region": "eu-central-1",
+        "stacked": false,
+        "title": "${self:service}-${self:provider.stage} :: Lambda errors",
+        "view": "table"
+      }
+    },
+    {
+      "type": "log",
+      "x": 0,
+      "y": 15,
+      "width": 24,
+      "height": 6,
+      "properties": {
+        "query": "SOURCE 'API-Gateway-Execution-Logs_${ApiGatewayRestApi}/${self:provider.stage}' | fields @timestamp, @message\n| sort @timestamp desc\n| head 100",
+        "region": "eu-central-1",
+        "stacked": false,
+        "title": "${self:service}-${self:provider.stage} :: Latest API logs",
+        "view": "table"
+      }
+    },
+    {
+      "type": "text",
+      "x": 18,
+      "y": 0,
+      "width": 6,
+      "height": 3,
+      "properties": {
+        "markdown": "\n# Note\nDashboards must be edited through serverless config (dashboard.yml).\n"
+      }
+    }
+    ]
+  }

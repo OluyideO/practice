@@ -1,0 +1,82 @@
+{
+  "name": "int-apps-serverless-node-ts",
+  "version": "0.0.6",
+  "description": "Finnair internal apps Serverless NodeJS TypeScript archetype project",
+  "scripts": {
+    "version:update-changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md",
+    "serverless": "node_modules/serverless/bin/serverless",
+    "pipeline": "cd deployment/pipeline && ./deploy-pipeline.sh $1 $2",
+    "sonar": "node_modules/sonarqube-scanner/dist/bin/sonar-scanner",
+    "eslint": "eslint --fix src/**/*",
+    "test": "jest --coverage",
+    "test:ci": "jest --silent --coverage",
+    "offline": "serverless offline start --stage dev",
+    "generate-swagger": "serverless openapi generate --output docs/openapi.json --format json --indent 2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FinnairOyj/int-apps-serverless-node-ts.git"
+  },
+  "keywords": [],
+  "author": "Finnair Oyj",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/FinnairOyj/int-apps-serverless-node-ts/issues"
+  },
+  "homepage": "https://github.com/FinnairOyj/int-apps-serverless-node-ts#readme",
+  "devDependencies": {
+    "@types/jest": "24.0.23",
+    "@types/node": "12.12.11",
+    "@types/verror": "1.10.3",
+    "@typescript-eslint/eslint-plugin": "1.13.0",
+    "@typescript-eslint/parser": "1.13.0",
+    "aws-sdk-mock": "4.5.0",
+    "chai": "4.2.0",
+    "chai-as-promised": "7.1.1",
+    "conventional-changelog-cli": "2.0.28",
+    "eslint": "6.6.0",
+    "eslint-config-finnair-microservices": "^1.1.1",
+    "graceful-fs": "4.2.3",
+    "jest": "24.9.0",
+    "jest-date-mock": "1.0.7",
+    "jest-sonar-reporter": "2.0.0",
+    "serverless": "1.57.0",
+    "serverless-add-api-key": "3.3.1",
+    "serverless-apigw-logging": "1.0.0",
+    "serverless-aws-documentation": "1.1.0",
+    "serverless-domain-manager": "3.3.0",
+    "serverless-offline": "5.12.0",
+    "serverless-plugin-aws-alerts": "1.4.0",
+    "serverless-reqvalidator-plugin": "1.0.3",
+    "serverless-webpack": "5.3.1",
+    "sonarqube-scanner": "2.5.0",
+    "ts-jest": "24.1.0",
+    "ts-loader": "6.2.1",
+    "ts-node": "8.5.2",
+    "typescript": "3.7.2"
+  },
+  "dependencies": {
+    "@types/aws-lambda": "8.10.36",
+    "@types/aws4": "1.5.1",
+    "@types/request-promise": "4.1.45",
+    "aws-sdk": "2.575.0",
+    "aws-xray-sdk": "2.5.0",
+    "aws4": "1.8.0",
+    "com-finnair-crew-services-commons": "^1.0.5",
+    "finnair-logger": "1.6.0",
+    "request": "2.88.0",
+    "request-promise": "4.2.5",
+    "serverless-openapi-documentation": "0.4.0",
+    "serverless-plugin-log-retention": "2.0.0",
+    "verror": "1.10.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testResultsProcessor": "jest-sonar-reporter"
+  },
+  "jestSonar": {
+    "reportPath": "reports",
+    "reportFile": "jest-report.xml",
+    "indent": 4
+  }
+}

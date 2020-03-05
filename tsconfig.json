@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": false,
+    "target": "es2017",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "baseUrl": "."
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "extends": ["config:base"],
+  "ignoreDeps": ["node", "npm"],
+  "automerge": false,
+  "bumpVersion": "patch",
+  "lockFileMaintenance": { "enabled": true },
+  "major": {
+    "enabled": false
+  },
+  "packageRules": [
+    {
+      "packagePatterns": ["*"],
+      "minor": {
+        "groupName": "all non-major dependencies",
+        "groupSlug": "all-minor-patch"
+      }
+    }
+  ]
+}

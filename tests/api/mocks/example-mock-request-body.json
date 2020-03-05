@@ -1,0 +1,8 @@
+{
+    "notificationType": "TEST",
+    "aircraftRegistration": "OH-LTU",
+    "maintenanceOpportunityId": "1",
+    "workPackageMaintenanceOpportunityId": "2",
+    "reportedBy": "AY12345",
+    "notificationDateTime": "2019-09-08T10:00:00"
+}

@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 8
+  pre_build:
+    commands:
+      - echo Fetching git metadata started on `date`
+  build:
+    commands:
+      - bash deployment/pipeline/resources/buildspec/scripts/fetch-git-metadata.sh
+  post_build:
+    commands:
+      - echo Fetching git metadata completed on `date`
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: '.'

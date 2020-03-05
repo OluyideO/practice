@@ -1,0 +1,10 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://www.finnair.com/int-apps/sample-get.schema.json",
+  "type": "object",
+  "title": "Sample GET response",
+  "properties": {
+    
+  }
+}

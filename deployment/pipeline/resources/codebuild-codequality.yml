@@ -1,0 +1,33 @@
+Type: AWS::CodeBuild::Project
+Properties:
+  Name: ${self:service}-CodeQualityCodeBuild-${self:provider.stage}
+  Source:
+    BuildSpec: deployment/pipeline/resources/buildspec/buildspec-code-quality.yml
+    Type: CODEPIPELINE
+  Artifacts:
+    Type: CODEPIPELINE
+  Cache:
+    Location: !Ref S3BucketDeployment
+    Type: S3
+  Environment:
+    Type: LINUX_CONTAINER
+    Image: 'aws/codebuild/standard:2.0'
+    ComputeType: BUILD_GENERAL1_SMALL
+    EnvironmentVariables:
+      - Name: API-KEY
+        Value: ${self:custom.tokens.apiKey}
+      - Name: AWS_ACCOUNT_ID
+        Value: !Ref AWS::AccountId
+      - Name: AWS_DEFAULT_REGION
+        Value: !Ref AWS::Region
+      - Name: ENVIRONMENT
+        Value: ${self:provider.stage}
+      - Name: GIT_BRANCH
+        Value: ${self:custom.env.gitBranch}
+      - Name: GITHUB_OAUTH_TOKEN
+        Value: ${self:custom.tokens.gitHubToken}
+      - Name: GIT_REPOSITORY_NAME
+        Value: ${self:custom.gitRepository}
+      - Name: SONARCLOUD_TOKEN
+        Value: ${self:custom.tokens.sonarCloudToken}
+  ServiceRole: !Ref CodeBuildRole

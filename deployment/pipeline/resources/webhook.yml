@@ -1,0 +1,13 @@
+Type: AWS::CodePipeline::Webhook
+Properties:
+  AuthenticationConfiguration:
+    SecretToken: ${self:custom.tokens.gitHubToken}
+  Filters: ${self:custom.${self:provider.stage}.webhookFilters, self:custom.dev.webhookFilters}
+  Authentication: GITHUB_HMAC
+  TargetPipeline: !Ref CodePipeline
+  TargetAction: Github
+  Name: ${self:service}-webhook-${self:provider.stage}
+  TargetPipelineVersion: !GetAtt
+    - CodePipeline
+    - Version
+  RegisterWithThirdParty: 'true'

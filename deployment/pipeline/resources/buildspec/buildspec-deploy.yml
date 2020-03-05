@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 8
+  build:
+    commands:
+      - chmod +x deployment/pipeline/resources/buildspec/scripts/deploy-serverless.sh
+      - chmod +x deployment/pipeline/resources/buildspec/scripts/parse_api_id.sh
+      - ./deployment/pipeline/resources/buildspec/scripts/deploy-serverless.sh $ENVIRONMENT
+  post_build:
+    commands:
+      - echo Deploy completed on `date`
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: '.'

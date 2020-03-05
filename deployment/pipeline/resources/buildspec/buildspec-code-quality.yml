@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 8
+    commands:
+      - echo Unit Tests started on `date`
+      - apt-get update
+      - apt-get install jq
+      - sh deployment/pipeline/setup-nexus.sh
+      - npm install
+      - cd components/authorizer
+      - sh ../../deployment/pipeline/setup-nexus.sh
+      - npm install
+      - cd ../..
+  build:
+    commands:
+      - npm run test:unit
+      - npm run test:eslint
+      - bash deployment/pipeline/resources/buildspec/scripts/sonar.sh $ENVIRONMENT
+  post_build:
+    commands:
+      - echo Code quality check completed on `date`
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: '.'

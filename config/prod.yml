@@ -1,0 +1,6 @@
+debug: "false"
+profile: ${self:provider.stage}
+apiGatewayLogFullRequests: true
+apiGatewayLoggingLevel: INFO
+certificateName: "*.api.dev.${self:service}.app.cloud.finnair.com"
+domainName: "${self:service}.api.${self:provider.stage}.${self:service}.app.cloud.finnair.com"

@@ -1,0 +1,13 @@
+Type: AWS::S3::Bucket
+Properties:
+  AccessControl: Private
+  BucketName: finnair-${self:custom.serviceName}-${self:provider.stage}
+  LifecycleConfiguration:
+    Rules:
+      - ExpirationInDays: 90
+        Id: Clean old build artifacts on whole bucket
+        Status: Enabled
+      - ExpirationInDays: 1
+        Id: Clean cached build dependencies every 1 day
+        Prefix: cache/archives/
+        Status: Enabled

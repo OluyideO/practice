@@ -1,0 +1,46 @@
+{
+2"openapi": "3.0.0",
+2"components": {
+22"schemas": {
+222"GetSampleResponse": {
+2222"title": "A sample object",
+2222"type": "object",
+2222"properties": {
+22222"message": {
+222222"description": "A message to you",
+222222"type": "string"
+22222}
+2222},
+2222"required": [
+22222"message"
+2222]
+222}
+22},
+22"securitySchemes": {}
+2},
+2"info": {
+22"title": "Internal Apps sample application",
+22"description": "A general description of this service",
+22"version": "1"
+2},
+2"paths": {
+22"//": {
+222"get": {
+2222"operationId": "app",
+2222"summary": "Gets a HTTP 200 OK response",
+2222"responses": {
+22222"200": {
+222222"description": "A simple object",
+222222"content": {
+2222222"application/json": {
+22222222"schema": {
+222222222"$ref": "#/components/schemas/GetSampleResponse"
+22222222}
+2222222}
+222222}
+22222}
+2222}
+222}
+22}
+2}
+}

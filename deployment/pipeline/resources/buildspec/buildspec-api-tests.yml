@@ -1,0 +1,17 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.7
+    commands:
+      - echo Build started on `date`
+      - pip install -r robot-requirements.txt
+
+  build:
+    commands:
+      - cd test/api
+      - sh run_tests_and_upload_reports.sh $ENVIRONMENT
+  post_build:
+    commands:
+      - echo Robotframework tests completed on `date`

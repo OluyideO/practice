@@ -1,0 +1,92 @@
+Type: AWS::CodePipeline::Pipeline
+Properties:
+  Name: ${self:provider.stackName}
+  RoleArn: !GetAtt
+    - CodePipelineRole
+    - Arn
+  RestartExecutionOnUpdate: false
+  ArtifactStore:
+    Location: !Ref S3BucketDeployment
+    Type: S3
+  Stages:
+    # Source Stage
+    - Name: Source
+      Actions:
+        - Name: Github
+          ActionTypeId:
+            Category: Source
+            Owner: ThirdParty
+            Provider: GitHub
+            Version: '1'
+          OutputArtifacts:
+            - Name: SourceOutput
+          Configuration:
+            Owner: FinnairOyj
+            Repo: ${self:custom.gitRepository}
+            Branch: ${self:custom.env.gitBranch}
+            OAuthToken: ${self:custom.tokens.gitHubToken}
+            PollForSourceChanges: false
+    # Build Stage
+    - Name: Build
+      Actions:
+        - Name: SourceMetadata
+          ActionTypeId:
+            Category: Build
+            Owner: AWS
+            Provider: CodeBuild
+            Version: '1'
+          InputArtifacts:
+            - Name: SourceOutput
+          OutputArtifacts:
+            - Name: SourceMetadataOutput
+          Configuration:
+            ProjectName: ${self:service}-SourceMetadataCodeBuild-${self:provider.stage}
+          RunOrder: 1
+    # CodeQuality Stage
+    - Name: CodeQuality
+      Actions:
+        - Name: CodeQuality
+          ActionTypeId:
+            Category: Test
+            Owner: AWS
+            Provider: CodeBuild
+            Version: '1'
+          InputArtifacts:
+            - Name: SourceMetadataOutput
+          OutputArtifacts:
+            - Name: CodeQualityOutput
+          Configuration:
+            ProjectName: ${self:service}-CodeQualityCodeBuild-${self:provider.stage}
+          RunOrder: 1
+    # Deploy Stage
+    - Name: Deploy
+      Actions:
+        - Name: Deploy
+          ActionTypeId:
+            Category: Build
+            Owner: AWS
+            Provider: CodeBuild
+            Version: '1'
+          InputArtifacts:
+            - Name: CodeQualityOutput
+          OutputArtifacts:
+            - Name: DeployOutput
+          Configuration:
+            ProjectName: ${self:service}-DeployCodeBuild-${self:provider.stage}
+          RunOrder: 1
+    # SystemQuality Stage
+    - Name: SystemQuality
+      Actions:
+        - Name: APITests
+          ActionTypeId:
+            Category: Test
+            Owner: AWS
+            Provider: CodeBuild
+            Version: '1'
+          InputArtifacts:
+            - Name: DeployOutput
+          OutputArtifacts:
+            - Name: APITestsOutput
+          Configuration:
+            ProjectName: ${self:service}-APITestsCodeBuild-${self:provider.stage}
+          RunOrder: 1

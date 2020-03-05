@@ -1,0 +1,60 @@
+service: int-apps-serverless-node-ts-pipeline
+
+frameworkVersion: '>=1.0.0 <2.0.0'
+
+provider:
+  name: aws
+  stage: ${opt:stage, 'dev'}
+  region: eu-central-1
+  versionFunctions: false
+  stackName: ${self:service}-${self:provider.stage}
+  stackTags:
+    Name: ${self:service}
+    BusinessUnit: IT
+    Service: Pipeline stack
+    Tier: Core
+    Env: ${self:provider.stage}
+    Owner: Finnair
+
+custom:
+  serviceName: int-apps-serverless-node-ts
+  gitRepository: int-apps-serverless-node-ts
+  packageJson: file(../../package.json)
+  tokens:
+    apiKey: ${ssm:/codebuild/int-apps-serverless-node-ts-${self:provider.stage}-api-key}
+    gitHubToken: ${ssm:/codepipeline/github-token}
+    sonarCloudToken: ${ssm:/codebuild/sonarcloud-token}
+  # Current env
+  env: ${self:custom.${self:provider.stage}, self:custom.dev}
+  # Dev/test environments from a custom branch (defaults to master)
+  dev:
+    gitBranch: ${env:GIT_BRANCH, 'master'}
+    webhookFilters:
+      - JsonPath: $.ref
+        MatchEquals: refs/heads/${self:custom.dev.gitBranch}
+  # Preprod environment always from master
+  preprod:
+    gitBranch: master
+    webhookFilters:
+      - JsonPath: $.ref
+        MatchEquals: refs/heads/${self:custom.preprod.gitBranch}
+  # Prod environment always from a version tag (in master, but it is not enforced here)
+  prod:
+    gitBranch: master
+    webhookFilters:
+      - JsonPath: $.ref
+        MatchEquals: refs/tags/v${self:custom.packageJson:version}
+
+resources:
+  Description: Pipeline stack
+  Resources:
+    S3BucketDeployment: ${file(resources/s3-bucket-deployment.yml)}
+    S3BucketApiTests: ${file(resources/s3-bucket-api-tests.yml)}
+    WebHook: ${file(resources/webhook.yml)}
+    CodePipeline: ${file(resources/codepipeline.yml)}
+    SourceMetadataCodeBuild: ${file(resources/codebuild-sourcemetadata.yml)}
+    CodeQualityCodeBuild: ${file(resources/codebuild-codequality.yml)}
+    DeployCodeBuild: ${file(resources/codebuild-deploy.yml)}
+    SystemQualityCodeBuild: ${file(resources/codebuild-systemQuality.yml)}
+    CodePipelineRole: ${file(resources/role-codepipeline.yml)}
+    CodeBuildRole: ${file(resources/role-codebuild.yml)}

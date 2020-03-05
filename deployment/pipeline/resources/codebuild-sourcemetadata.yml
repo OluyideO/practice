@@ -1,0 +1,23 @@
+Type: AWS::CodeBuild::Project
+Properties:
+  Name: ${self:service}-SourceMetadataCodeBuild-${self:provider.stage}
+  Source:
+    BuildSpec: deployment/pipeline/resources/buildspec/buildspec-source-metadata.yml
+    Type: CODEPIPELINE
+  Artifacts:
+    Type: CODEPIPELINE
+  Cache:
+    Location: !Ref S3BucketDeployment
+    Type: S3
+  Environment:
+    Type: LINUX_CONTAINER
+    Image: 'aws/codebuild/standard:2.0'
+    ComputeType: BUILD_GENERAL1_SMALL
+    EnvironmentVariables:
+      - Name: GIT_BRANCH
+        Value: ${self:custom.env.gitBranch}
+      - Name: GITHUB_OAUTH_TOKEN
+        Value: ${self:custom.tokens.gitHubToken}
+      - Name: GIT_REPOSITORY_NAME
+        Value: ${self:custom.gitRepository}
+  ServiceRole: !Ref CodeBuildRole
